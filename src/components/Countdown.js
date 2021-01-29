@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { colors } from "../utils/colors";
 import { fontSizes, spacing } from "../utils/sizes";
@@ -28,10 +28,18 @@ export default function Countdown({ minutes = 20, isPaused = true }) {
   const seconds = Math.floor(millis / 1000) % 60;
 
   useEffect(() => {
-    if (isPaused) return;
+    setMillis(minutesToMillis(minutes));
+  }, [minutes]);
+
+  useEffect(() => {
+    if (isPaused) {
+      if (interval.current) clearInterval(interval.current);
+      return;
+    }
     interval.current = setInterval(countDown, 1000);
     return () => clearInterval(interval.current);
   }, [isPaused]);
+
   return (
     <View style={styles.textBox}>
       <Text style={styles.text}>
