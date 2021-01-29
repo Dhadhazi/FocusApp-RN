@@ -11,7 +11,7 @@ function formatTime(time) {
   return time < 10 ? `0${time}` : time;
 }
 
-export default function Countdown({ minutes = 20, isPaused }) {
+export default function Countdown({ minutes = 20, isPaused = true }) {
   function countDown() {
     setMillis((time) => {
       if (time === 0) {
@@ -23,19 +23,18 @@ export default function Countdown({ minutes = 20, isPaused }) {
   }
 
   const [millis, setMillis] = useState(minutesToMillis(minutes));
-
   const interval = useRef(null);
   const minute = Math.floor(millis / 1000 / 60) % 60;
   const seconds = Math.floor(millis / 1000) % 60;
 
   useEffect(() => {
+    if (isPaused) return;
     interval.current = setInterval(countDown, 1000);
     return () => clearInterval(interval.current);
-  });
+  }, [isPaused]);
   return (
-    <View>
+    <View style={styles.textBox}>
       <Text style={styles.text}>
-        {" "}
         {formatTime(minute)}:{formatTime(seconds)}
       </Text>
     </View>
@@ -44,6 +43,7 @@ export default function Countdown({ minutes = 20, isPaused }) {
 
 const styles = StyleSheet.create({
   text: {
+    textAlign: "center",
     color: colors.white,
     fontSize: fontSizes.xxxl,
     fontWeight: "bold",
