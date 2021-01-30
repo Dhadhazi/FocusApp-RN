@@ -6,11 +6,7 @@ import { fontSizes, spacing } from "../../utils/sizes";
 
 export default function FocusHistory({ focusHistory, clearHistory }) {
   function HistoryItem({ item, index }) {
-    return (
-      <Text style={styles.historyItem(item.status)} key={index}>
-        {item.subject}
-      </Text>
-    );
+    return <Text style={styles.historyItem(item.status)}>{item.subject}</Text>;
   }
 
   return (
@@ -24,6 +20,7 @@ export default function FocusHistory({ focusHistory, clearHistory }) {
             contentContainerStyle={{ flex: 1 }}
             data={focusHistory}
             renderItem={HistoryItem}
+            keyExtractor={(item) => item.subject}
           />
           <View style={styles.clearHistory}>
             <RoundedButton

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, SafeAreaView, Platform } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Focus } from "./src/features/focus/Focus";
 import FocusHistory from "./src/features/focus/FocusHistory";
 import { Timer } from "./src/features/timer/Timer";
@@ -16,13 +17,39 @@ export default function App() {
 
   function focusFinished(status) {
     addFocusHistorySubjectWithState(focusSubject, status);
-
     setFocusSubject(null);
   }
 
   function clearHistory() {
     setFocusHistory([]);
   }
+
+  async function saveFocusHistory() {
+    try {
+      await AsyncStorage.setItem("focusHistory", JSON.stringify(focusHistory));
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function loadFocusHistory() {
+    try {
+      const history = await AsyncStorage.getItem("focusHistory");
+      if (history && JSON.parse(history).length) {
+        setFocusHistory(JSON.parse(history));
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    loadFocusHistory();
+  }, []);
+
+  useEffect(() => {
+    saveFocusHistory();
+  }, [focusHistory]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
