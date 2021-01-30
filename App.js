@@ -1,28 +1,40 @@
 import React, { useState } from "react";
-import { StyleSheet, View, SafeAreaView, Text, Platform } from "react-native";
+import { StyleSheet, View, SafeAreaView, Platform } from "react-native";
 import { Focus } from "./src/features/focus/Focus";
+import FocusHistory from "./src/features/focus/FocusHistory";
 import { Timer } from "./src/features/timer/Timer";
 import { colors } from "./src/utils/colors";
 import { spacing } from "./src/utils/sizes";
 
 export default function App() {
-  const [focusSubject, setFocusSubject] = useState("Gardening");
+  const [focusSubject, setFocusSubject] = useState(null);
+  const [focusHistory, setFocusHistory] = useState([]);
 
-  function clearSubject() {
+  function addFocusHistorySubjectWithState(subject, status) {
+    setFocusHistory([...focusHistory, { subject, status }]);
+  }
+
+  function focusFinished(status) {
+    addFocusHistorySubjectWithState(focusSubject, status);
+
     setFocusSubject(null);
   }
+
+  function clearHistory() {}
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {focusSubject ? (
-          <Timer
-            focusSubject={focusSubject}
-            onTimerEnd={() => setFocusSubject(null)}
-            clearSubject={clearSubject}
-          />
+          <Timer focusSubject={focusSubject} focusFinished={focusFinished} />
         ) : (
-          <Focus addSubject={setFocusSubject} />
+          <>
+            <Focus addSubject={setFocusSubject} />
+            <FocusHistory
+              focusHistory={focusHistory}
+              clearHistory={clearHistory}
+            />
+          </>
         )}
       </View>
     </SafeAreaView>

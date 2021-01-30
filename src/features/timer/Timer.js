@@ -7,10 +7,9 @@ import { RoundedButton } from "../../components/RoundedButton";
 import { colors } from "../../utils/colors";
 import { spacing } from "../../utils/sizes";
 import Timing from "./Timing";
+import { STATUS, DEFAULT_TIME } from "../../../Const";
 
-const DEFAULT_TIME = 1;
-
-export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
+export const Timer = ({ focusSubject, focusFinished }) => {
   useKeepAwake();
 
   const [isStarted, setIsStarted] = useState(false);
@@ -29,7 +28,7 @@ export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
     vibrate();
     setMinutes(DEFAULT_TIME);
     setIsStarted(false);
-    onTimerEnd();
+    focusFinished(STATUS.COMPLETE);
   }
 
   function changeTime(time) {
@@ -63,7 +62,7 @@ export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
         <RoundedButton
           title={"Cancel"}
           size={50}
-          onpress={() => clearSubject()}
+          onpress={() => focusFinished(STATUS.CANCELLED)}
         />
       </View>
     </View>
