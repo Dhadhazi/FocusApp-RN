@@ -20,7 +20,9 @@ export default function App() {
     setFocusSubject(null);
   }
 
-  function clearHistory() {}
+  function clearHistory() {
+    setFocusHistory([]);
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
