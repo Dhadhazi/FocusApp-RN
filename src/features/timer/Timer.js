@@ -10,7 +10,7 @@ import Timing from "./Timing";
 
 const DEFAULT_TIME = 1;
 
-export const Timer = ({ focusSubject, onTimerEnd }) => {
+export const Timer = ({ focusSubject, onTimerEnd, clearSubject }) => {
   useKeepAwake();
 
   const [isStarted, setIsStarted] = useState(false);
@@ -59,6 +59,13 @@ export const Timer = ({ focusSubject, onTimerEnd }) => {
           }}
         />
       </View>
+      <View style={styles.clearSubject}>
+        <RoundedButton
+          title={"Cancel"}
+          size={50}
+          onpress={() => clearSubject()}
+        />
+      </View>
     </View>
   );
 };
@@ -87,5 +94,9 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     justifyContent: "center",
     alignItems: "center",
+  },
+  clearSubject: {
+    paddingBottom: spacing.md,
+    paddingLeft: spacing.md,
   },
 });

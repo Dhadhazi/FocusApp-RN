@@ -27,5 +27,5 @@ const styles = (size) =>
       borderColor: colors.white,
       borderWidth: 2,
     },
-    text: { color: colors.white, fontSize: size / 3 },
+    text: { color: colors.white, fontSize: size / 4 },
   });

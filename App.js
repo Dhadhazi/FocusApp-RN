@@ -7,6 +7,11 @@ import { spacing } from "./src/utils/sizes";
 
 export default function App() {
   const [focusSubject, setFocusSubject] = useState("Gardening");
+
+  function clearSubject() {
+    setFocusSubject(null);
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -14,6 +19,7 @@ export default function App() {
           <Timer
             focusSubject={focusSubject}
             onTimerEnd={() => setFocusSubject(null)}
+            clearSubject={clearSubject}
           />
         ) : (
           <Focus addSubject={setFocusSubject} />
