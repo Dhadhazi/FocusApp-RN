@@ -11,13 +11,21 @@ function formatTime(time) {
   return time < 10 ? `0${time}` : time;
 }
 
-export default function Countdown({ minutes = 20, isPaused = true }) {
+export default function Countdown({
+  minutes = 20,
+  isPaused = true,
+  onEnd,
+  onProgress,
+}) {
   function countDown() {
     setMillis((time) => {
       if (time === 0) {
+        clearInterval(interval.current);
+        onEnd();
         return time;
       }
       const timeLeft = time - 1000;
+      onProgress(timeLeft / minutesToMillis(minutes));
       return timeLeft;
     });
   }

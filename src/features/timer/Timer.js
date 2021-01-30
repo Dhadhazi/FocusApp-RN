@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Vibration, Platform } from "react-native";
 import { useKeepAwake } from "expo-keep-awake";
+import { ProgressBar } from "react-native-paper";
 
 import Countdown from "../../components/Countdown";
 import { RoundedButton } from "../../components/RoundedButton";
@@ -8,11 +9,38 @@ import { colors } from "../../utils/colors";
 import { spacing } from "../../utils/sizes";
 import Timing from "./Timing";
 
-export const Timer = ({ focusSubject }) => {
+const DEFAULT_TIME = 1;
+
+export const Timer = ({ focusSubject, onTimerEnd }) => {
   useKeepAwake();
 
   const [isStarted, setIsStarted] = useState(false);
-  const [minutes, setMinutes] = useState(0.1);
+  const [minutes, setMinutes] = useState(DEFAULT_TIME);
+  const [progress, setProgress] = useState(1);
+
+  function vibrate() {
+    if (Platform.OS === "ios") {
+      const interval = setInterval(() => Vibration.vibrate(), 1000);
+      setTimeout(() => clearInterval(interval), 5000);
+    } else {
+      Vibration.vibrate("5s");
+    }
+  }
+
+  function onEnd() {
+    vibrate();
+    setMinutes(DEFAULT_TIME);
+    setIsStarted(false);
+    onTimerEnd();
+  }
+
+  function onProgress(progress) {
+    setProgress(progress);
+  }
+
+  function changeTime(time) {
+    setMinutes(time);
+  }
 
   return (
     <View style={styles.container}>
@@ -20,12 +48,26 @@ export const Timer = ({ focusSubject }) => {
         <Text style={styles.title}>Focusing on: </Text>
         <Text style={styles.focusSubject}>{focusSubject}</Text>
       </View>
+      <View style={{ paddingTop: spacing.sm }}>
+        <ProgressBar
+          color={colors.lightBlue}
+          style={{ height: spacing.sm }}
+          progress={progress}
+        />
+      </View>
       <View style={styles.countdown}>
-        <Countdown isPaused={!isStarted} minutes={minutes} />
+        <Countdown
+          isPaused={!isStarted}
+          minutes={minutes}
+          onEnd={onEnd}
+          onProgress={onProgress}
+        />
       </View>
+
       <View style={styles.buttonWrapper}>
-        <Timing changeTime={setMinutes} />
+        <Timing changeTime={changeTime} />
       </View>
+
       <View style={styles.buttonWrapper}>
         <RoundedButton
           title={isStarted ? "Pause" : "Start"}
