@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Vibration, Platform } from "react-native";
 import { useKeepAwake } from "expo-keep-awake";
-import { ProgressBar } from "react-native-paper";
 
 import Countdown from "../../components/Countdown";
 import { RoundedButton } from "../../components/RoundedButton";
@@ -16,7 +15,6 @@ export const Timer = ({ focusSubject, onTimerEnd }) => {
 
   const [isStarted, setIsStarted] = useState(false);
   const [minutes, setMinutes] = useState(DEFAULT_TIME);
-  const [progress, setProgress] = useState(1);
 
   function vibrate() {
     if (Platform.OS === "ios") {
@@ -34,10 +32,6 @@ export const Timer = ({ focusSubject, onTimerEnd }) => {
     onTimerEnd();
   }
 
-  function onProgress(progress) {
-    setProgress(progress);
-  }
-
   function changeTime(time) {
     setMinutes(time);
   }
@@ -48,20 +42,9 @@ export const Timer = ({ focusSubject, onTimerEnd }) => {
         <Text style={styles.title}>Focusing on: </Text>
         <Text style={styles.focusSubject}>{focusSubject}</Text>
       </View>
-      <View style={{ paddingTop: spacing.sm }}>
-        <ProgressBar
-          color={colors.lightBlue}
-          style={{ height: spacing.sm }}
-          progress={progress}
-        />
-      </View>
+
       <View style={styles.countdown}>
-        <Countdown
-          isPaused={!isStarted}
-          minutes={minutes}
-          onEnd={onEnd}
-          onProgress={onProgress}
-        />
+        <Countdown isPaused={!isStarted} minutes={minutes} onEnd={onEnd} />
       </View>
 
       <View style={styles.buttonWrapper}>

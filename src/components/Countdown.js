@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { View, Text, StyleSheet } from "react-native";
+import { ProgressBar } from "react-native-paper";
+
 import { colors } from "../utils/colors";
 import { fontSizes, spacing } from "../utils/sizes";
 
@@ -11,12 +13,14 @@ function formatTime(time) {
   return time < 10 ? `0${time}` : time;
 }
 
-export default function Countdown({
-  minutes = 20,
-  isPaused = true,
-  onEnd,
-  onProgress,
-}) {
+export default function Countdown({ minutes = 20, isPaused = true, onEnd }) {
+  const [millis, setMillis] = useState(minutesToMillis(minutes));
+  const [progress, setProgress] = useState(1);
+
+  const interval = useRef(null);
+  const minute = Math.floor(millis / 1000 / 60) % 60;
+  const seconds = Math.floor(millis / 1000) % 60;
+
   function countDown() {
     setMillis((time) => {
       if (time === 0) {
@@ -25,15 +29,10 @@ export default function Countdown({
         return time;
       }
       const timeLeft = time - 1000;
-      onProgress(timeLeft / minutesToMillis(minutes));
+      setProgress(timeLeft / minutesToMillis(minutes));
       return timeLeft;
     });
   }
-
-  const [millis, setMillis] = useState(minutesToMillis(minutes));
-  const interval = useRef(null);
-  const minute = Math.floor(millis / 1000 / 60) % 60;
-  const seconds = Math.floor(millis / 1000) % 60;
 
   useEffect(() => {
     setMillis(minutesToMillis(minutes));
@@ -53,6 +52,11 @@ export default function Countdown({
       <Text style={styles.text}>
         {formatTime(minute)}:{formatTime(seconds)}
       </Text>
+      <ProgressBar
+        color={colors.lightBlue}
+        style={{ height: spacing.sm }}
+        progress={progress}
+      />
     </View>
   );
 }
